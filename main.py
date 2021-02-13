@@ -53,20 +53,22 @@ g = GUI()
 class GlobalGUI(GUI):
     def Call(self): 
         g.username.pack()
+        g.usernameBox.pack(); 
         g.password.pack()
+        g.passwordBox.pack(); 
         g.enter.pack()
 
 
 class Make(GlobalGUI): 
     def __init__(self):  
         g.makeAccount.pack()
-        GlobalGUI.Call()
+        GlobalGUI.Call(self)
 
 
 class Have(GlobalGUI): 
     def __init__(self):  
         g.haveAccount.pack()
-        GlobalGUI.Call()
+        GlobalGUI.Call(self)
        
 
 class LocalGUI(GUI): 
@@ -82,13 +84,13 @@ short = ""
 
 def makeNewAccount(): 
     global Mode
-    MODE = Mode.GLOCAL
-    globalGui = GlobalGUI()
+    MODE = Mode.GLOBAL
+    m = Make() 
 
 def signIn(): 
     global Mode
-    MODE = Mode.GLOCAL
-    globalGui = GlobalGUI()
+    MODE = Mode.GLOBAL
+    h = Have()
     
 
 def localAccount(): 
@@ -98,7 +100,10 @@ def localAccount():
 
 
 def proceed(): 
-    pass
+    g.enter.pack()
+    g.URlBox.pack()
+    g.shortenButton.pack()
+    g.giveNewURL.pack()
 
 def openURL(URL): 
     webbrowser.get(browser).open(URL)
