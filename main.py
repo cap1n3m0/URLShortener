@@ -29,7 +29,7 @@ class Local(Account):
         hostName = socket.gethostname()
         self.IP = socket.gethostbyname(hostName)
 
-account = []
+accounts = []
 
 class GUI: 
     gui.geometry("800x1250")
@@ -43,14 +43,25 @@ class GUI:
     usernameBox = Entry(gui, bd = 10)
     password = Label(gui, text = "Enter password: ")
     passwordBox = Entry(gui, bd = 10)
-    enter = Button(gui, text = "Enter", command = lambda: proceed())
+    enter = Button(gui, text = "Enter", command = lambda: proceed())    
+    accountExists = Label(text = "Error! Account exists! Please sign in, reset your password, or make another account")
+    sendEmail = Label(text = "Send password reset email", command = lambda: sendPasswordResetEmail())
+    emailBoxReset = Label(text = "Enter the email this account was registered with: ")
+    resetEmail = Entry(gui, bd = 5)
+    emailButton = Button(gui, text = "Send mail to this account", command = lambda: sendPasswordResetEmail())
     URlBox = Entry(gui, bd = 5)
     shortenButton = Button(gui, text = "Shorten URL", command = lambda: shortenURL(enteredText))
     giveNewURL = Label(gui, text = "")
 
 g = GUI()
 
-class GlobalGUI(GUI):
+def resetMail(): 
+    gui.sendEmail.pack()
+    gui.emailBoxReset.pack()
+    gui.resetEmail.pack()
+    gui.emailButton.pack()
+
+class GlobalGUI:
     def Call(self): 
         g.username.pack()
         g.usernameBox.pack(); 
@@ -71,7 +82,7 @@ class Have(GlobalGUI):
         GlobalGUI.Call(self)
        
 
-class LocalGUI(GUI): 
+class LocalGUI: 
     def __init__(self):  
         g.enter.pack()
         g.URlBox.pack()
@@ -79,8 +90,21 @@ class LocalGUI(GUI):
         g.giveNewURL.pack()
 
 
+def sendPasswordResetEmail(email): 
+    resetMail()
+
+
 browser = 'safari'
 short = ""
+
+
+def IntroGUI(): 
+    g.title.pack()
+    g.accounts.pack()
+    g.local.pack()
+    g.goLocal.pack()
+    g.haveAccount.pack()
+    g.makeAccount.pack()
 
 def makeNewAccount(): 
     global Mode
@@ -99,11 +123,20 @@ def localAccount():
     localGUI = LocalGUI()
 
 
-def proceed(): 
-    g.enter.pack()
-    g.URlBox.pack()
-    g.shortenButton.pack()
-    g.giveNewURL.pack()
+def proceed(acc): 
+    flag = False
+    for account in accounts: 
+        if account == acc: 
+            flag = False
+    if flag: 
+        accounts.add(acc) 
+        g.enter.pack()
+        g.URlBox.pack()
+        g.shortenButton.pack()
+        g.giveNewURL.pack()
+    else: 
+        g.accountExists.pack()
+
 
 def openURL(URL): 
     webbrowser.get(browser).open(URL)
@@ -128,11 +161,6 @@ def shortenURL(URL):
         g.giveNewURL.pack()
         openURL(URL)
 
-g.title.pack()
-g.accounts.pack()
-g.local.pack()
-g.goLocal.pack()
-g.haveAccount.pack()
-g.makeAccount.pack()
+IntroGUI()
 
 gui.mainloop() 
