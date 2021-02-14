@@ -31,6 +31,9 @@ class Local(Account):
         hostName = socket.gethostname()
         self.IP = socket.gethostbyname(hostName)
 
+def resetMail(): 
+    pass
+
 accounts = []
 
 class GUI: 
@@ -43,7 +46,7 @@ class GUI:
     haveAccount = Label(gui, text = "Have an account?", font = ("Courier", 20))
     makeAccount = Label(gui, text = "New?", font = ("Courier", 20))
     makeAccountButton = Button(gui, text = "Make Account", font = ("Courier", 20), command = lambda: makeNewAccount())
-    haveAccountButton = Button(gui, text = "Sign in", font = ("Courier", 20), command = lambda: makeNewAccount())
+    haveAccountButton = Button(gui, text = "Sign in", font = ("Courier", 20), command = lambda: signIn())
     username = Label(gui, text = "Enter username: ")
     usernameBox = Entry(gui, bd = 10)
     password = Label(gui, text = "Enter password: ")
@@ -52,11 +55,14 @@ class GUI:
     accountExists = Label(text = "Error! Account exists! Please sign in, reset your password, or make another account")
     emailBoxReset = Label(text = "Enter the email this account was registered with: ")
     resetEmail = Entry(gui, bd = 5)
-    URlBox = Entry(gui, bd = 5)
-    shortenButton = Button(gui, text = "Shorten URL", command = lambda: shortenURL(enteredText))
-    giveNewURL = Label(gui, text = "")  
-    # sendEmail = Label(text = "Send password reset email", command = resetMail)
-    # emailButton = Button(gui, text = "Send mail to this account", command = lambda: resetMail())
+    sendEmail = Label(text = "Send password reset email")
+    sendEmail.pack()
+    emailBoxReset = Label(text = "Enter the email this account was registered with: ")
+    emailBoxReset.pack()
+    resetEmail = Entry(gui, bd = 5)
+    resetEmail.pack()
+    emailButton = Button(gui, text = "Send mail to this account", command = lambda: resetMail())
+    emailButton.pack()
     def makeBlank(self, h): 
         sizedBox = Label(gui, text = "", height = h)
         sizedBox.pack()
@@ -76,13 +82,14 @@ class Intro(GUI):
         self.makeAccount.pack()
         self.makeAccountButton.pack()
 
+
 class Local(GUI): 
     def __init__(self): 
         self.enter.pack()
         self.URlBox.pack()
         self.shortenButton.pack()
         self.giveNewURL.pack()
-        clearScreen(gui)
+        window = Window()
 
 class Global(GUI):
     def __init__(self): 
@@ -91,19 +98,43 @@ class Global(GUI):
         self.password.pack()
         self.passwordBox.pack(); 
         self.enter.pack()
-        clearScreen(gui)
+        window = Window()
+
+
+class Email(GUI): 
+    def __init__(self): 
+        self.emailBoxReset.pack()
+        self.sendEmail.pack()
+        self.emailBoxReset.pack()
+        self.resetEmail.pack()
+        self.emailButton.pack()
 
 
 class Make(Global): 
     def __init__(self):  
         self.makeAccount.pack()
-        self.Call(self)
+        GLOBAL = Global()
 
 
 class Have(Global): 
     def __init__(self):  
         self.haveAccount.pack()
-        self.Call(self)
+        GLOBAL = Global()
+
+
+def setToGlobal(): 
+    global Mode
+    MODE = Mode.GLOBAL
+
+
+def makeNewAccount(): 
+    setToGlobal()
+    m = Make() 
+
+
+def signIn(): 
+    setToGlobal()
+    h = Have()
 
 
 class Flag(GUI): 
@@ -131,81 +162,34 @@ def resetMail():
     gui.resetEmail.pack()
     gui.emailButton.pack()
 
-class Window(): 
-    def __init__(self): 
-        self.window = Tk()
-        self.window.geometry("800x1250")
-        self.title = Label(gui, text="URL Shortener", width = 200)
-        self.title.config(font = ("Courier", 60))
-        self.title.pack()
-        self.accounts = Label(gui, text = "Make an account to save your URLs on any device!", font = ("Courier", 20))
-        self.accounts.pack()
-        self.local = Label(gui, text = "Or, save these URLs on your local browser!", font = ("Courier", 20))
-        self.local.pack()
-        self.goLocal = Button(gui, text = "Save locally", width  = 20, font = ("Courier", 20), command = lambda: localAccount())
-        self.goLocal.pack()
-        self.haveAccount = Label(gui, text = "Have an account?", font = ("Courier", 20))
-        self.haveAccount.pack()
-        self.makeAccount = Label(gui, text = "New?", font = ("Courier", 20))
-        self.makeAccount.pack()
-        self.makeAccountButton = Button(gui, text = "Make Account", font = ("Courier", 20), command = lambda: makeNewAccount())
-        self.makeAccountButton.pack()
-        self.haveAccountButton = Button(gui, text = "Sign in", font = ("Courier", 20), command = lambda: makeNewAccount())
-        self.haveAccountButton.pack()
-        self.username = Label(gui, text = "Enter username: ")
-        self.username.pack()
-        self.usernameBox = Entry(gui, bd = 10)
-        self.usernameBox.pack()
-        self.password = Label(gui, text = "Enter password: ")
-        self.password.pack()
-        self.passwordBox = Entry(gui, bd = 10)
-        self.passwordBox.pack()
-        self.enter = Button(gui, text = "Enter", command = lambda: proceed())    
-        self.enter.pack()
-        self.accountExists = Label(text = "Error! Account exists! Please sign in, reset your password, or make another account")
-        self.accountExists.pack()
-        self.sendEmail = Label(text = "Send password reset email", command = resetMail)
-        self.sendEmail.pack()
-        self.emailBoxReset = Label(text = "Enter the email this account was registered with: ")
-        self.emailBoxReset.pack()
-        self.resetEmail = Entry(gui, bd = 5)
-        self.resetEmail.pack()
-        self.emailButton = Button(gui, text = "Send mail to this account", command = lambda: resetMail())
-        self.emailButton.pack()
-        self.URlBox = Entry(gui, bd = 5)
-        self.URlBox.pack()
-        self.shortenButton = Button(gui, text = "Shorten URL", command = lambda: shortenURL(enteredText))
-        self.shortenButton.pack()
-        self.giveNewURL = Label(gui, text = "")  
-        self.giveNewURL.pack()
 
-    def makeBlank(self, window, h): 
-        sizedBox = Label(window, text = "", height = h)
-        sizedBox.pack()
-
-
-def clearScreen(oldWindow): 
-    window = Window()
+def localAccount(): 
+    global Mode
+    MODE = Mode.LOCAL   
+    localGUI = Local()
 
 
 def IntroGUI(): 
     intro = Intro()
 
-def makeNewAccount(): 
-    global Mode
-    MODE = Mode.GLOBAL
-    m = Make() 
+class Window(): 
+    def __init__(self): 
+        window = Tk()
+        window.geometry("800x1250")
+        self.title = Label(window, text="URL Shortener", width = 200)
+        self.title.config(font = ("Courier", 60))
+        self.title.pack()
+        self.URlBox = Entry(window, bd = 5)
+        self.URlBox.pack()
+        self.shortenButton = Button(window, text = "Shorten URL", command = lambda: shortenURL(enteredText))
+        self.shortenButton.pack()
+        self.giveNewURL = Label(window, text = "")  
+        self.giveNewURL.pack()
+        gui.destroy() 
 
-def signIn(): 
-    global Mode
-    MODE = Mode.GLOBAL
-    h = Have()
-    
-
-def localAccount(): 
-    global Mode
-    MODE = Mode.LOCAL
-    localGUI = Local()
+    def makeBlank(self, window, h): 
+        sizedBox = Label(window, text = "", height = h)
+        sizedBox.pack()
 
 
 def proceed(acc): 
@@ -227,7 +211,7 @@ def shortenURL(URL):
     global short 
     global enteredText
     isThere = False
-    enteredText = g.URlBox.get()
+    enteredText = Window().URlBox.get()
     s = pyshorteners.Shortener()
     short = s.tinyurl.short(URL)
     for s in Account().urls:
